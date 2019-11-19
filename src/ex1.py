@@ -9,6 +9,7 @@ import requests
 from boilerpipe.extract import Extractor
 from bs4 import BeautifulSoup
 from numpy import mean, std
+from ex2 import getLanguages
 
 
 def get_files(path):
@@ -50,11 +51,17 @@ def justextProcess(data):
 
     nTotal = len(data.keys())
     nWrite = 0
+    langs = getLanguages(data)
 
     for filename, datum in data.items():
         content = ''
+
         paragraphs = justext.justext(
-            datum, justext.get_stoplist('English')
+            datum, justext.get_stoplist(
+                'English' if langs[filename] is None else langs[filename].name if langs[
+                    filename].name != 'Chinese' and langs[
+                    filename].name != 'Modern Greek (1453-)' else 'English'
+            )
         )
         for paragraph in paragraphs:
             if not paragraph.is_boilerplate:
