@@ -1,0 +1,16 @@
+astroid==2.3.3
+autopep8==1.4.4
+beautifulsoup4==4.8.1
+boilerpipe3==1.1
+charade==1.0.3
+isort==4.3.21
+JPype1-py3==0.5.5.4
+jusText==2.2.0
+lazy-object-proxy==1.4.3
+lxml==4.4.1
+mccabe==0.6.1
+pycodestyle==2.5.0
+pylint==2.4.4
+six==1.13.0
+soupsieve==1.9.5
+wrapt==1.11.2
