@@ -9,9 +9,11 @@ idna==2.8
 isort==4.3.21
 JPype1-py3==0.5.5.4
 jusText==2.2.0
+langid==1.1.6
 lazy-object-proxy==1.4.3
 lxml==4.4.1
 mccabe==0.6.1
+numpy==1.17.4
 pycodestyle==2.5.0
 pylint==2.4.4
 requests==2.22.0
