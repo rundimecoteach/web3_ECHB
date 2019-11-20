@@ -7,6 +7,7 @@ import json
 tournaments = dict()
 stats = dict()
 participants = dict()
+rankings = dict()
 
 
 def checkAndSanitize(data):
@@ -135,13 +136,41 @@ def participantsData(data, doc):
     return data
 
 
+def rankingsData(data, doc):
+    def parseStats(stat):
+        stat = checkAndSanitize(stat)
+        return stat.replace(':', '').strip()
+    html_doc = doc.text
+    soup = BeautifulSoup(html_doc, 'html.parser')
+    res = list()
+    i = 0
+    head = list()
+    for row in soup.findAll('tr'):
+        aux = row.findAll('td')
+        if i == 2:
+            head = [checkAndSanitize(dd) for dd in aux if aux]
+        elif i > 2:
+            dtt = [checkAndSanitize(dd) for dd in aux if aux]
+            zipped = zip(head, dtt)
+            res.append(dict(list(zipped)))
+        i += 1
+
+        for item in res:
+            item.pop('\u00a0', None)
+            item.pop('Fede', None)
+
+    data['rankings'] = res
+
+    return data
+
+
 if __name__ == "__main__":
     argc = len(sys.argv)
-    iterations = range(30005, 30006)
+    iterations = range(30000, 30100)
     base_url = 'http://echecs.asso.fr/FicheTournoi.aspx?Ref={}'
     urls = list(map(lambda x: (x, base_url.format(x)), iterations))
     content = dict()
-    print("\n========== Description ==========")
+    print("\n========== Descriptions ==========")
     if argc >= 2 and 'save' in sys.argv[1]:
         for index, url in urls:
             doc = requests.get(url)
@@ -193,6 +222,24 @@ if __name__ == "__main__":
         content_with_stats_and_part = pickle.load(
             open('../../resources/td2_with_stats_part.save', mode='rb')
         )
-
-    json.dump(content_with_stats_and_part, open(
-        '../../resources/dump.json', mode='w+', encoding='utf-8'))
+    print("\n========== Rankings ==========")
+    if argc >= 2 and 'rank' in sys.argv[1]:
+        content_with_stats_and_part_rank = dict()
+        base_url = 'http://echecs.asso.fr/Resultats.aspx?URL=Tournois/Id/{}/{}&Action=Ga'
+        urls = list(map(lambda x: (x, base_url.format(x, x)), iterations))
+        for index, url in urls:
+            doc = requests.get(url)
+            rankings[index] = doc
+        for index, doc in rankings.items():
+            content_with_stats_and_part_rank[index] = rankingsData(
+                content_with_stats_and_part[index], doc)
+        pickle.dump(
+            content_with_stats_and_part_rank,
+            open('../../resources/td2_with_stats_part_rank.save', mode='wb+')
+        )
+    else:
+        content_with_stats_and_part_rank = pickle.load(
+            open('../../resources/td2_with_stats_part_rank.save', mode='rb')
+        )
+    json.dump(content_with_stats_and_part_rank, open(
+        '../../resources/dump.json', mode='w+', encoding='utf-8'), ensure_ascii=False)
