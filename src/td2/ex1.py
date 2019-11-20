@@ -166,7 +166,7 @@ def rankingsData(data, doc):
 
 if __name__ == "__main__":
     argc = len(sys.argv)
-    iterations = range(30000, 30100)
+    iterations = range(30000, 30500)
     base_url = 'http://echecs.asso.fr/FicheTournoi.aspx?Ref={}'
     urls = list(map(lambda x: (x, base_url.format(x)), iterations))
     content = dict()
@@ -241,5 +241,7 @@ if __name__ == "__main__":
         content_with_stats_and_part_rank = pickle.load(
             open('../../resources/td2_with_stats_part_rank.save', mode='rb')
         )
-    json.dump(content_with_stats_and_part_rank, open(
+    jsonPrep = dict()
+    jsonPrep['tournaments'] = list(content_with_stats_and_part_rank.values())
+    json.dump(jsonPrep, open(
         '../../resources/dump.json', mode='w+', encoding='utf-8'), ensure_ascii=False)
