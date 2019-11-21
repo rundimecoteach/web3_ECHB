@@ -45,6 +45,6 @@ if __name__ == "__main__":
             nbOfWon = len(firstInRanking(participant['Nom']))
             if nbOfWon != 0:
                 wonCount[participant['Nom']] = nbOfWon
-    winners = sorted(wonCount.items(), key=operator.itemgetter(0))
+    winners = sorted(wonCount.items(), value=operator.itemgetter(0))
     print(len(winners))
     print(winners)
