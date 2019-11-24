@@ -245,3 +245,41 @@ if __name__ == "__main__":
     jsonPrep['tournaments'] = list(content_with_stats_and_part_rank.values())
     json.dump(jsonPrep, open(
         '../../resources/dump.json', mode='w+', encoding='utf-8'), ensure_ascii=False)
+
+    # Ajout d'un traitement pour avoir un dictionnaire des participants ou pour chaque participant on a son nom, prenom, et une liste (tournoi et place , pts)
+    set_of_participants= set()
+    for items in content_with_stats_and_part_rank.values():
+        for item in items['rankings']:
+            if(item['Nom']!=''):
+                set_of_participants.add(item['Nom'])
+    
+    participants_list=list()
+    #print(set_of_participants)
+
+    for person in set_of_participants:
+        temp=dict()
+        temp['name']=person
+        participations=list()
+        for items in content_with_stats_and_part_rank.values():
+            for item in items['rankings']:
+                if(item['Nom'] == person):
+                    temp_tournoi=dict()
+                    temp_tournoi['id_tournois']=items['id']
+                    temp_tournoi['pl']=item['Pl']
+                    if 'Elo' in item.keys():
+                        temp_tournoi['elo']=item['Elo']
+                    if 'perf' in item.keys():
+                        temp_tournoi['perf']=item['Perf']
+                    participations.append(temp_tournoi)
+        temp['participations']=participations
+        participants_list.append(temp)
+    jsonPrepParticipants = dict()
+    jsonPrepParticipants['participants'] = list(participants_list)
+    json.dump(jsonPrepParticipants, open(
+        '../../resources/participants.json', mode='w+', encoding='utf-8'), ensure_ascii=False)
+
+
+        
+
+
+
